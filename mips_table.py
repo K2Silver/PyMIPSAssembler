@@ -1,7 +1,8 @@
 function_codes = {
+    'add' : 0b100000,
     'addu' : 0b100001,
     'and' : 0b100100,
-    'break' 0b001101,
+    'break' : 0b001101,
     'div' : 0b011010,
     'divu' : 0b011011,
     'jalr' : 0b001001,
@@ -24,7 +25,7 @@ function_codes = {
     'srlv' : 0b000110,
     'sub' : 0b100010,
     'subu' : 0b100011,
-    'syscall' 0b001100,
+    'syscall' : 0b001100,
     'xor' : 0b100110,
 }
 
