@@ -22,6 +22,6 @@ def assemble(instruction):
     bin_inst[21:26] = 0
     bin_inst[26:32] = function_code
     # .append(int(r2)).append(int(r3)).append(int(r1)).append('0b100000')
-    print bin_inst
-
-assemble("add $3, $2, $10")
+    return bin_inst
+instr_bin = assemble(input("Enter MIPS instruction:"))
+print instr_bin
