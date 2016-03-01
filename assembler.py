@@ -48,8 +48,16 @@ assembler_dispatch = {
     'R': assembler_r_type,
     'I': assembler_i_type,
     'J': assembler_j_type
+    # 'JR' : assembler_jr_type,
+    # 'B': assembler_b_type,
+    # 'MD' : assembler_md_type,
+    # 'MEM' : assembler_mem_type,
+    # 'MF' : assembler_mf_type,
+    # 'SH' : assembler_sh_type,
+    # 'SP' : assembler_sp_type,
+    # 'L' : assembler_l_type
 }
 
 # instr_bin = assemble(input("Enter MIPS instruction:"))
 print assemble("xor $1, $2, $3")
-print assemble("ori $4, $2, 2490")
+print assemble("ori $4, $2, -300")
