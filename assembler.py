@@ -27,5 +27,6 @@ def assemble(instruction):
     bin_inst[21:26] = instr_info[SHIFT_AMT]
     bin_inst[26:32] = instr_info[FUNCTION_CODE]
     print bin_inst
-
-assemble("add $3, $2, $10")
+    return bin_inst
+instr_bin = assemble(input("Enter MIPS instruction:"))
+print instr_bin
