@@ -37,6 +37,7 @@ def assembler_i_type(bin_inst, instr_info, instruction):
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:11] = int(rs)
     bin_inst[11:16] = int(rt)
+    bin_inst[16:32] = int(imval)
     return bin_inst
 
 def assembler_j_type(bin_inst, instr_info, instruction):
@@ -50,5 +51,5 @@ assembler_dispatch = {
 }
 
 # instr_bin = assemble(input("Enter MIPS instruction:"))
-instr_bin = assemble("xor $1, $2, $3")
-print instr_bin
+print assemble("xor $1, $2, $3")
+print assemble("ori $4, $2, 2490")
