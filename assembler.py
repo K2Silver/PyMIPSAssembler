@@ -44,19 +44,28 @@ def assembler_j_type(bin_inst, instr_info, instruction):
     tokens = re.compile("^\s*\w{1,5}\s*(0x0[\dA-Fa-f]{6}[048Cc])\s*$").match(instruction)
     target_address = tokens.group(1)
     bin_inst[0:6] = instr_info[OPCODE]
-    print BitArray(target_address)
     bin_inst[6:32] = BitArray(target_address)[4:30]
+    return bin_inst
 
+def assembler_mem_type(bin_inst, instr_info, instruction):
+    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*\(\s*\$([3][0-1]|[1-2]\d|\d)\s*\)\s*$").match(instruction)
+    rt = tokens.group(1)
+    rs = tokens.group(3)
+    offset = tokens.group(2)
+    bin_inst[0:6] = instr_info[OPCODE]
+    bin_inst[6:11] = int(rs)
+    bin_inst[11:16] = int(rt)
+    bin_inst[16:32] = int(offset)
     return bin_inst
 
 assembler_dispatch = {
     'R': assembler_r_type,
     'I': assembler_i_type,
-    'J': assembler_j_type
+    'J': assembler_j_type,
+    'MEM' : assembler_mem_type
     # 'JR' : assembler_jr_type,
     # 'B': assembler_b_type,
     # 'MD' : assembler_md_type,
-    # 'MEM' : assembler_mem_type,
     # 'MF' : assembler_mf_type,
     # 'SH' : assembler_sh_type,
     # 'SP' : assembler_sp_type,
@@ -68,3 +77,5 @@ print assemble("xor $1, $2, $3")
 print assemble("ori $4, $2, -300")
 print assemble("jal 0x0040204C")
 print assemble("j 0x014020CC")
+print assemble("sw $1, 40($4)")
+print assemble("lb $2, -120($2)")
