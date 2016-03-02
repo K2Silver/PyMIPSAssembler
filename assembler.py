@@ -8,7 +8,7 @@ FUNCTION_CODE = 1
 INSTRUCTION_TYPE = 2
 
 def assemble(instruction):
-    regex_instr = re.compile("(\w{2,5})").match(instruction)
+    regex_instr = re.compile("(\w{1,5})").match(instruction)
     instruction_name = regex_instr.group(1)
     instr_info = mips_table.instruction[instruction_name]
 
@@ -17,7 +17,7 @@ def assemble(instruction):
     return bin_inst
 
 def assembler_r_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("\w{2,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d)").match(instruction)
+    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d)").match(instruction)
     rd = tokens.group(1)
     rs = tokens.group(2)
     rt = tokens.group(3)
@@ -30,7 +30,7 @@ def assembler_r_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_i_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("\w{2,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})$").match(instruction)
+    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*$").match(instruction)
     rt = tokens.group(1)
     rs = tokens.group(2)
     imval = tokens.group(3)
@@ -41,7 +41,12 @@ def assembler_i_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_j_type(bin_inst, instr_info, instruction):
+    tokens = re.compile("^\s*\w{1,5}\s*(0x0[\dA-Fa-f]{6}[048Cc])\s*$").match(instruction)
+    target_address = tokens.group(1)
     bin_inst[0:6] = instr_info[OPCODE]
+    print BitArray(target_address)
+    bin_inst[6:32] = BitArray(target_address)[4:30]
+
     return bin_inst
 
 assembler_dispatch = {
@@ -61,3 +66,5 @@ assembler_dispatch = {
 # instr_bin = assemble(input("Enter MIPS instruction:"))
 print assemble("xor $1, $2, $3")
 print assemble("ori $4, $2, -300")
+print assemble("jal 0x0040204C")
+print assemble("j 0x014020CC")
