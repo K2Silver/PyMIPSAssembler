@@ -50,8 +50,19 @@ def assembler_j_type(bin_inst, instr_info, instruction):
 def assembler_mem_type(bin_inst, instr_info, instruction):
     tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*\(\s*\$([3][0-1]|[1-2]\d|\d)\s*\)\s*$").match(instruction)
     rt = tokens.group(1)
-    rs = tokens.group(3)
     offset = tokens.group(2)
+    rs = tokens.group(3)
+    bin_inst[0:6] = instr_info[OPCODE]
+    bin_inst[6:11] = int(rs)
+    bin_inst[11:16] = int(rt)
+    bin_inst[16:32] = int(offset)
+    return bin_inst
+
+def assembler_b_type(bin_inst, instr_info, instruction):
+    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*$").match(instruction)
+    rs = tokens.group(1)
+    rt = tokens.group(2)
+    offset = tokens.group(3)
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:11] = int(rs)
     bin_inst[11:16] = int(rt)
@@ -62,9 +73,9 @@ assembler_dispatch = {
     'R': assembler_r_type,
     'I': assembler_i_type,
     'J': assembler_j_type,
-    'MEM' : assembler_mem_type
+    'MEM' : assembler_mem_type,
+    'B': assembler_b_type
     # 'JR' : assembler_jr_type,
-    # 'B': assembler_b_type,
     # 'MD' : assembler_md_type,
     # 'MF' : assembler_mf_type,
     # 'SH' : assembler_sh_type,
@@ -79,3 +90,4 @@ print assemble("jal 0x0040204C")
 print assemble("j 0x014020CC")
 print assemble("sw $1, 40($4)")
 print assemble("lb $2, -120($2)")
+print assemble("beq $1, $2, -3")
