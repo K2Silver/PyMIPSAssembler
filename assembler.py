@@ -69,14 +69,26 @@ def assembler_b_type(bin_inst, instr_info, instruction):
     bin_inst[16:32] = int(offset)
     return bin_inst
 
+def assembler_md_type(bin_inst, instr_info, instruction):
+    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d)\s*$").match(instruction)
+    rs = tokens.group(1)
+    rt = tokens.group(2)
+    bin_inst[0:6] = instr_info[OPCODE]
+    bin_inst[6:11] = int(rs)
+    bin_inst[11:16] = int(rt)
+    bin_inst[16:21] = 0x00
+    bin_inst[21:26] = 0x00
+    bin_inst[26:32] = instr_info[FUNCTION_CODE]
+    return bin_inst
+
 assembler_dispatch = {
     'R': assembler_r_type,
     'I': assembler_i_type,
     'J': assembler_j_type,
     'MEM' : assembler_mem_type,
-    'B': assembler_b_type
+    'B': assembler_b_type,
+    'MD' : assembler_md_type
     # 'JR' : assembler_jr_type,
-    # 'MD' : assembler_md_type,
     # 'MF' : assembler_mf_type,
     # 'SH' : assembler_sh_type,
     # 'SP' : assembler_sp_type,
@@ -84,10 +96,7 @@ assembler_dispatch = {
 }
 
 # instr_bin = assemble(input("Enter MIPS instruction:"))
-print assemble("xor $1, $2, $3")
-print assemble("ori $4, $2, -300")
-print assemble("jal 0x0040204C")
-print assemble("j 0x014020CC")
-print assemble("sw $1, 40($4)")
-print assemble("lb $2, -120($2)")
-print assemble("beq $1, $2, -3")
+with open('instructions.txt', 'r') as infile:
+    for line in infile:
+        print assemble(line)
+infile.close()
