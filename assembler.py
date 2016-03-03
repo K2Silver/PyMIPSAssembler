@@ -147,5 +147,5 @@ assembler_dispatch = {
 # instr_bin = assemble(input("Enter MIPS instruction:"))
 with open('instructions.txt', 'r') as infile:
     for line in infile:
-        print assemble(line)
+        print assemble(line), ':', line
 infile.close()
