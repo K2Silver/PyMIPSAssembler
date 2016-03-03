@@ -9,3 +9,5 @@ divu $4, $5
 mfhi $4
 jal 0x0040204C
 j 0x014020CC
+sll $5, $4, 4
+srav $6, $5, $4
