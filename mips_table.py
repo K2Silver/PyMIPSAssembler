@@ -51,3 +51,38 @@ instruction = {
     'syscall' : [0x00, 0x0C, "SP"],
     'nop'     : [0x00, 0x00, "SP"]
 }
+
+register_name = {
+    'zero' : 0,  # [zero]
+    'at'   : 1,  # [assermbler temporary], reserved by assembler
+    'v0'   : 2,  # [values] from expression evaluation and function results
+    'v1'   : 3,
+    'a0'   : 4,  # [arguments] first four paramters for subroutines
+    'a1'   : 5,
+    'a2'   : 6,
+    'a3'   : 7,
+    't0'   : 8,  # [temporaries] caller saved if needed, not preserved across procedure calls
+    't1'   : 9,  #               subroutines can use without saving
+    't2'   : 10,
+    't3'   : 11,
+    't4'   : 12,
+    't5'   : 13,
+    't6'   : 14,
+    't7'   : 15,
+    's0'   : 16, # [saved] callee saved, preserved across procedure calls
+    's1'   : 17, #         subroutine must save original and restore if used
+    's2'   : 18,
+    's3'   : 19,
+    's4'   : 20,
+    's5'   : 21,
+    's6'   : 22,
+    's7'   : 23,
+    't8'   : 24,
+    't9'   : 25,
+    'k0'   : 26, # reserved for interrupt/trap handler
+    'k1'   : 27,
+    'gp'   : 28, # [global pointer] middle of 64K block in static data
+    'sp'   : 29, # [stack pointer] last location in stack
+    'fp'   : 30, # [frame pointer]
+    'ra'   : 31, # [return address]
+}
