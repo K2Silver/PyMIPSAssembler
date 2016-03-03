@@ -15,7 +15,7 @@ instruction = {
     'divu'  : [0x00, 0x1B, "MD"],
     'j'     : [0x02, 0x00, "J"],
     'jal'   : [0x03, 0x00, "J"],
-    'jalr'  : [0x00, 0x09, "JR"],
+    'jalr'  : [0x00, 0x09, "JR"], # rd, rs or rs
     'jr'    : [0x00, 0x08, "JR"],
     'lb'    : [0x20, 0x08, "MEM"],
     'lbu'   : [0x24, 0x00, "MEM"],
