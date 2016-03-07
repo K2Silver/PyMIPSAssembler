@@ -129,6 +129,16 @@ def assembler_jr_type(bin_inst, instr_info, instruction):
     bin_inst[26:32] = instr_info[FUNCTION_CODE]
     return bin_inst
 
+def assembler_l_type(bin_inst, instr_info, instruction):
+    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*$").match(instruction)
+    rt = tokens.group(1)
+    imval = tokens.group(2)
+    bin_inst[0:6] = instr_info[OPCODE]
+    bin_inst[6:11] = 0x000
+    bin_inst[11:16] = int(rt)
+    bin_inst[16:32] = int(imval)
+    return bin_inst
+
 assembler_dispatch = {
     'R': assembler_r_type,
     'I': assembler_i_type,
@@ -139,9 +149,10 @@ assembler_dispatch = {
     'MF' : assembler_mf_type,
     'SH' : assembler_sh_type,
     'SHV': assembler_shv_type,
-    'JR' : assembler_jr_type
+    'JR' : assembler_jr_type,
+    'L' : assembler_l_type
+    # 'PS': assembler_ps_type
     # 'SP' : assembler_sp_type,
-    # 'L' : assembler_l_type
 }
 
 # instr_bin = assemble(input("Enter MIPS instruction:"))
