@@ -7,8 +7,15 @@ OPCODE = 0
 FUNCTION_CODE = 1
 INSTRUCTION_TYPE = 2
 
+RE_INST_CAPTURE = "(\w{1,5})";
+RE_INST = "\s*\w{1,5}\s*"
+RE_REG = "\s*\$([3][0-1]|[1-2]\d|\d)\s*"
+RE_IMVAL = "\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*"
+RE_SHAMT = "\s*([3][0-1]|[1-2]\d|\d)\s*"
+RE_ADDR = "\s*(0x0[\dA-Fa-f]{6}[048Cc])\s*"
+
 def assemble(instruction):
-    regex_instr = re.compile("(\w{1,5})").match(instruction)
+    regex_instr = re.compile(RE_INST_CAPTURE).match(instruction)
     instruction_name = regex_instr.group(1)
     instr_info = mips_table.instruction[instruction_name]
 
@@ -17,7 +24,7 @@ def assemble(instruction):
     return bin_inst
 
 def assembler_r_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d)").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_REG + "," + RE_REG + "$").match(instruction)
     rd = tokens.group(1)
     rs = tokens.group(2)
     rt = tokens.group(3)
@@ -30,7 +37,7 @@ def assembler_r_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_i_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_REG + "," + RE_IMVAL + "$").match(instruction)
     rt = tokens.group(1)
     rs = tokens.group(2)
     imval = tokens.group(3)
@@ -41,14 +48,14 @@ def assembler_i_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_j_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*(0x0[\dA-Fa-f]{6}[048Cc])\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_ADDR + "$").match(instruction)
     target_address = tokens.group(1)
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:32] = BitArray(target_address)[4:30]
     return bin_inst
 
 def assembler_mem_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*\(\s*\$([3][0-1]|[1-2]\d|\d)\s*\)\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_IMVAL + "\(" + RE_REG + "\)" + "\s*$").match(instruction)
     rt = tokens.group(1)
     offset = tokens.group(2)
     rs = tokens.group(3)
@@ -59,7 +66,7 @@ def assembler_mem_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_b_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_REG + "," + RE_IMVAL + "$").match(instruction)
     rs = tokens.group(1)
     rt = tokens.group(2)
     offset = tokens.group(3)
@@ -70,7 +77,7 @@ def assembler_b_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_md_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d)\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_REG + "$").match(instruction)
     rs = tokens.group(1)
     rt = tokens.group(2)
     bin_inst[0:6] = instr_info[OPCODE]
@@ -82,7 +89,7 @@ def assembler_md_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_mf_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d)\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "$").match(instruction)
     rd = tokens.group(1)
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:11] = 0x00
@@ -93,7 +100,7 @@ def assembler_mf_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_sh_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*([3][0-1]|[1-2]\d|\d)\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_REG + "," + RE_SHAMT + "$").match(instruction)
     rd = tokens.group(1)
     rt = tokens.group(2)
     shamt = tokens.group(3)
@@ -106,7 +113,7 @@ def assembler_sh_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_shv_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d),\s*\$([3][0-1]|[1-2]\d|\d)").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_REG + "," + RE_REG + "$").match(instruction)
     rd = tokens.group(1)
     rt = tokens.group(2)
     rs = tokens.group(3)
@@ -119,7 +126,7 @@ def assembler_shv_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_jr_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d)\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "$").match(instruction)
     rs = tokens.group(1)
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:11] = int(rs)
@@ -130,7 +137,7 @@ def assembler_jr_type(bin_inst, instr_info, instruction):
     return bin_inst
 
 def assembler_l_type(bin_inst, instr_info, instruction):
-    tokens = re.compile("^\s*\w{1,5}\s*\$([3][0-1]|[1-2]\d|\d),\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*$").match(instruction)
+    tokens = re.compile("^" + RE_INST + RE_REG + "," + RE_IMVAL + "$").match(instruction)
     rt = tokens.group(1)
     imval = tokens.group(2)
     bin_inst[0:6] = instr_info[OPCODE]
