@@ -85,4 +85,37 @@ register_name = {
     'sp'   : 29, # [stack pointer] last location in stack
     'fp'   : 30, # [frame pointer]
     'ra'   : 31, # [return address]
+
+    '0'    : 0,  # [zero]
+    '1'    : 1,  # [assermbler temporary], reserved by assembler
+    '2'    : 2,  # [values] from expression evaluation and function results
+    '3'    : 3,
+    '4'    : 4,  # [arguments] first four paramters for subroutines
+    '5'    : 5,
+    '6'    : 6,
+    '7'    : 7,
+    '8'    : 8,  # [temporaries] caller saved if needed, not preserved across procedure calls
+    '9'    : 9,  #               subroutines can use without saving
+    '10'   : 10,
+    '11'   : 11,
+    '12'   : 12,
+    '13'   : 13,
+    '14'   : 14,
+    '15'   : 15,
+    '16'   : 16, # [saved] callee saved, preserved across procedure calls
+    '17'   : 17, #         subroutine must save original and restore if used
+    '18'   : 18,
+    '19'   : 19,
+    '20'   : 20,
+    '21'   : 21,
+    '22'   : 22,
+    '23'   : 23,
+    '24'   : 24,
+    '25'   : 25,
+    '26'   : 26, # reserved for interrupt/trap handler
+    '27'   : 27,
+    '28'   : 28, # [global pointer] middle of 64K block in static data
+    '29'   : 29, # [stack pointer] last location in stack
+    '30'   : 30, # [frame pointer]
+    '31'   : 31, # [return address]
 }

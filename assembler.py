@@ -9,7 +9,7 @@ INSTRUCTION_TYPE = 2
 
 RE_INST_CAPTURE = "(\w{1,5})";
 RE_INST = "\s*\w{1,5}\s*"
-RE_REG = "\s*\$([3][0-1]|[1-2]\d|\d)\s*"
+RE_REG = "\s*\$([3][0-1]|[1-2]\d|\d|zero|at|v[0-1]|a[0-3]|t[0-9]|s[0-7]|k[0-1]|gp|sp|fp|ra)\s*"
 RE_IMVAL = "\s*(3[0-2][0-7][0-6][0-7]|-3[0-2][0-7][0-6][0-8]|-?1\d{4}|-?2\d{4}|-?\d{1,4})\s*"
 RE_SHAMT = "\s*([3][0-1]|[1-2]\d|\d)\s*"
 RE_ADDR = "\s*(0x0[\dA-Fa-f]{6}[048Cc])\s*"
@@ -29,9 +29,9 @@ def assembler_r_type(bin_inst, instr_info, instruction):
     rs = tokens.group(2)
     rt = tokens.group(3)
     bin_inst[0:6] = instr_info[OPCODE]
-    bin_inst[6:11] = int(rs)
-    bin_inst[11:16] = int(rt)
-    bin_inst[16:21] = int(rd)
+    bin_inst[6:11] = mips_table.register_name[rs]
+    bin_inst[11:16] = mips_table.register_name[rt]
+    bin_inst[16:21] = mips_table.register_name[rd]
     bin_inst[21:26] = 0x00
     bin_inst[26:32] = instr_info[FUNCTION_CODE]
     return bin_inst
@@ -42,8 +42,8 @@ def assembler_i_type(bin_inst, instr_info, instruction):
     rs = tokens.group(2)
     imval = tokens.group(3)
     bin_inst[0:6] = instr_info[OPCODE]
-    bin_inst[6:11] = int(rs)
-    bin_inst[11:16] = int(rt)
+    bin_inst[6:11] = mips_table.register_name[rs]
+    bin_inst[11:16] = mips_table.register_name[rt]
     bin_inst[16:32] = int(imval)
     return bin_inst
 
@@ -60,8 +60,8 @@ def assembler_mem_type(bin_inst, instr_info, instruction):
     offset = tokens.group(2)
     rs = tokens.group(3)
     bin_inst[0:6] = instr_info[OPCODE]
-    bin_inst[6:11] = int(rs)
-    bin_inst[11:16] = int(rt)
+    bin_inst[6:11] = mips_table.register_name[rs]
+    bin_inst[11:16] = mips_table.register_name[rt]
     bin_inst[16:32] = int(offset)
     return bin_inst
 
@@ -71,8 +71,8 @@ def assembler_b_type(bin_inst, instr_info, instruction):
     rt = tokens.group(2)
     offset = tokens.group(3)
     bin_inst[0:6] = instr_info[OPCODE]
-    bin_inst[6:11] = int(rs)
-    bin_inst[11:16] = int(rt)
+    bin_inst[6:11] = mips_table.register_name[rs]
+    bin_inst[11:16] = mips_table.register_name[rt]
     bin_inst[16:32] = int(offset)
     return bin_inst
 
@@ -81,8 +81,8 @@ def assembler_md_type(bin_inst, instr_info, instruction):
     rs = tokens.group(1)
     rt = tokens.group(2)
     bin_inst[0:6] = instr_info[OPCODE]
-    bin_inst[6:11] = int(rs)
-    bin_inst[11:16] = int(rt)
+    bin_inst[6:11] = mips_table.register_name[rs]
+    bin_inst[11:16] = mips_table.register_name[rt]
     bin_inst[16:21] = 0x00
     bin_inst[21:26] = 0x00
     bin_inst[26:32] = instr_info[FUNCTION_CODE]
@@ -94,7 +94,7 @@ def assembler_mf_type(bin_inst, instr_info, instruction):
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:11] = 0x00
     bin_inst[11:16] = 0x00
-    bin_inst[16:21] = int(rd)
+    bin_inst[16:21] = mips_table.register_name[rd]
     bin_inst[21:26] = 0x00
     bin_inst[26:32] = instr_info[FUNCTION_CODE]
     return bin_inst
@@ -106,8 +106,8 @@ def assembler_sh_type(bin_inst, instr_info, instruction):
     shamt = tokens.group(3)
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:11] = 0x00
-    bin_inst[11:16] = int(rt)
-    bin_inst[16:21] = int(rd)
+    bin_inst[11:16] = mips_table.register_name[rt]
+    bin_inst[16:21] = mips_table.register_name[rd]
     bin_inst[21:26] = int(shamt)
     bin_inst[26:32] = instr_info[FUNCTION_CODE]
     return bin_inst
@@ -118,9 +118,9 @@ def assembler_shv_type(bin_inst, instr_info, instruction):
     rt = tokens.group(2)
     rs = tokens.group(3)
     bin_inst[0:6] = instr_info[OPCODE]
-    bin_inst[6:11] = int(rs)
-    bin_inst[11:16] = int(rt)
-    bin_inst[16:21] = int(rd)
+    bin_inst[6:11] = mips_table.register_name[rs]
+    bin_inst[11:16] = mips_table.register_name[rt]
+    bin_inst[16:21] = mips_table.register_name[rd]
     bin_inst[21:26] = 0x00
     bin_inst[26:32] = instr_info[FUNCTION_CODE]
     return bin_inst
@@ -129,7 +129,7 @@ def assembler_jr_type(bin_inst, instr_info, instruction):
     tokens = re.compile("^" + RE_INST + RE_REG + "$").match(instruction)
     rs = tokens.group(1)
     bin_inst[0:6] = instr_info[OPCODE]
-    bin_inst[6:11] = int(rs)
+    bin_inst[6:11] = mips_table.register_name[rs]
     bin_inst[11:16] = 0x00
     bin_inst[16:21] = 0x00
     bin_inst[21:26] = 0x00
@@ -142,7 +142,7 @@ def assembler_l_type(bin_inst, instr_info, instruction):
     imval = tokens.group(2)
     bin_inst[0:6] = instr_info[OPCODE]
     bin_inst[6:11] = 0x000
-    bin_inst[11:16] = int(rt)
+    bin_inst[11:16] = mips_table.register_name[rt]
     bin_inst[16:32] = int(imval)
     return bin_inst
 

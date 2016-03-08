@@ -1,15 +1,15 @@
-xor $4, $2, $3
-ori $4, $2, 2200
-sw $8, 40($4)
-lb $8, -120($2)
-beq $8, $2, -3
-mult $16, $2
-mflo $16
-divu $4, $5
-mfhi $4
+xor $t0, $s0, $20
+ori $t8, $s2, 2200
+sw  $a2, 40($4)
+lb  $s1, -120($2)
+beq $t1, $2, -3
+mult $s4, $2
+mflo $s3
+divu $t3, $5
+mfhi $t2
 jal 0x0040204C
-j 0x014020CC
-sll $5, $4, 4
-srav $6, $5, $4
-jr $31
-lui $14, 2200
+j   0x014020CC
+sll  $t5, $21, 4
+srav $s7, $a0, $4
+jr  $ra
+lui $t0, 2200
