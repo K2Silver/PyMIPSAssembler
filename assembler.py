@@ -1,5 +1,6 @@
 # Convert MIPS assembly to binary instruction
 import re
+import sys
 from bitstring import BitArray
 import mips_table
 
@@ -162,8 +163,12 @@ assembler_dispatch = {
     # 'SP' : assembler_sp_type,
 }
 
-# instr_bin = assemble(input("Enter MIPS instruction:"))
-with open('instructions.txt', 'r') as infile:
-    for line in infile:
-        print assemble(line), ':', line
-infile.close()
+if len(sys.argv) == 2:
+    with open(sys.argv[1], 'r') as infile:
+        for line in infile:
+            print assemble(line), ':', line
+    infile.close()
+elif len(sys.argv) == 1:
+    instr_bin = assemble(input("Enter MIPS instruction:"))
+else:
+    print "Invalid program call" # TODO: Explain usage
