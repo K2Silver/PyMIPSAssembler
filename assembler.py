@@ -170,5 +170,6 @@ if len(sys.argv) == 2:
     infile.close()
 elif len(sys.argv) == 1:
     instr_bin = assemble(input("Enter MIPS instruction:"))
+    print instr_bin
 else:
     print "Invalid program call" # TODO: Explain usage
